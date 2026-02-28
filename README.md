@@ -45,4 +45,4 @@ This website is deployed using GitHub Pages.
 
 ## 📄 Resume
 
-The resume can be accessed via the "View CV" button on the website.
+The resume can be accessed via the "Download CV" button on the website.
