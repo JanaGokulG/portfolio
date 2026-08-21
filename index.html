@@ -1556,7 +1556,26 @@ function handleFormSubmit(e) {
   btn.disabled = true;
   btn.innerHTML = `<span>Sending...</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>`;
   
-  setTimeout(() => {
+  // Get values from form
+  const name = document.getElementById('frmName').value;
+  const email = document.getElementById('frmEmail').value;
+  const subject = document.getElementById('frmSubject').value;
+  const message = document.getElementById('frmMessage').value;
+
+  // Send request to serverless endpoint
+  fetch('/api/send-email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name, email, subject, message }),
+  })
+  .then(async (response) => {
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to send message.');
+    }
+    
     // Show success state
     btn.innerHTML = `<span>Message Sent! ✓</span>`;
     btn.style.background = 'linear-gradient(135deg, #00c98d, #00e5c4)';
@@ -1570,7 +1589,23 @@ function handleFormSubmit(e) {
       btn.style.background = '';
       btn.style.boxShadow = '';
     }, 3500);
-  }, 1500);
+  })
+  .catch((error) => {
+    console.error('Error sending message:', error);
+    
+    // Show error state
+    btn.innerHTML = `<span>Failed to Send ✗</span>`;
+    btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+    btn.style.boxShadow = '0 0 20px rgba(239, 68, 68, 0.4)';
+    
+    setTimeout(() => {
+      // Revert button state
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+      btn.style.background = '';
+      btn.style.boxShadow = '';
+    }, 3500);
+  });
 }
 
 // BACK TO TOP PROGRESS SCROLLER
